@@ -1,2 +1,2 @@
-# codepen
-My CodePen Pens
+# Codepen
+My pens of CodePen.
