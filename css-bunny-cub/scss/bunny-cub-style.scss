@@ -1,0 +1,456 @@
+@import url('https://fonts.googleapis.com/css?family=Bree+Serif');
+
+$bunny-color:        #af7f54;
+$bunny-head-size:    120px;
+$eye-iris:           #000;
+$eye-color:          #2ecc71;
+$eye-size:           25px;
+$color-white:        #fff;
+$bg-contrast-color:  #ffc0cb;
+
+html, body {
+	height: 100%;
+}
+
+body {
+	background: radial-gradient(circle, #ffe8ec 50%, $bg-contrast-color);
+	font-family: 'Bree Serif', serif;
+}
+
+.wrapper {
+	display: flex;
+	height: calc(100% - 80px);
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+}
+
+.head {
+	background: rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	//text-transform: uppercase;
+	text-align: center;
+	color: darken($bg-contrast-color, 70%);
+	
+	.title {
+		font-size: 1.6em;
+	}
+	
+	.subtitle {
+		margin: 0 6px ;
+		opacity: .5;
+	}
+}
+
+// Placeholders
+%ear__body {
+	content: '';
+	background: $bunny-color;
+	width: 100px;
+	height: 50px;
+	border-radius: 0 100%;
+	position: relative;
+	display: inline-block;
+	box-shadow: inset 16px 15px 10px 6px rgba(0, 0, 0, 0.22);
+}
+
+%bunny-fur {
+	width: 40px;
+	height: 25px;
+	border-radius: 50%;
+	box-shadow: 0 -5px 0 0 darken($bunny-color, 12%);
+	position: absolute;
+}
+
+
+// to do: bunny fur and whiskers to mixin
+%whiskers {
+	width: 70px;
+	height: 20px;
+  border-radius: 50%;
+  box-shadow: 0px -1px 0px 0px #000;
+}
+
+%mouth-details {
+	content: '';
+	border-radius: 50%;
+	background: $bunny-color;
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 3px 0 0 #000;
+	z-index: 1;
+}
+
+// /!\ safari render fix
+%render-fix {
+	-webkit-transform-style: flat;
+	-webkit-transform: translateZ(0);
+}
+		
+// Head
+.bunny {
+	position: relative;	
+}
+
+.bunny__head {
+	background: $bunny-color;
+	width: $bunny-head-size;
+	height: $bunny-head-size + 2px;
+	border-radius: 50%/80% 80% 40% 40%;
+	display: flex;
+  justify-content: center;
+	position: relative;
+	box-shadow: inset -1px 36px 16px rgba(0, 0, 0, 0.21);
+	z-index: 2; // relative to bunny body
+	animation: swing 5s ease-in-out infinite;
+	
+	// Head Fur
+	&::before {
+		@extend %bunny-fur;
+		content: '';
+    transform: rotateZ(-63deg);
+		left: 38px;
+		right: 0;
+	}
+	
+	&::after {
+		@extend %bunny-fur;
+		content: '';
+    transform: rotateZ(-34deg);
+		left: 48px;
+		right: 0;
+	}
+}
+
+// Ears
+.bunny__ears {
+	width: 200px;
+	position: absolute;
+	// safari issue for absolute flex items
+	left: -38px;
+	right: 0;
+	// ---
+	display: flex;
+	flex-direction: row;
+	top: 25px;
+
+	// Left ear
+	&::before {
+		@extend %ear__body;
+		left: -($bunny-head-size / 5);
+		transform: rotateZ(-245deg);
+	}
+
+	// Right ear
+	&::after {
+		@extend %ear__body;
+		right: -($bunny-head-size / 5);
+		animation: balance 5s ease-in-out infinite;
+	}
+}
+
+// Eyes
+.bunny__eyes {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	width: inherit;
+	position: absolute;
+	top: 48px;
+	left: 0;
+	right: 0;
+	
+	.eye {
+		@extend %render-fix;
+		
+		background: $eye-iris;
+		box-shadow: inset 3px 0px 0 $color-white,
+			          inset 7px 0px 0 $eye-color,
+			          3px -4px 16px 9px rgba(0, 0, 0, 0.2),
+			          1px -3px 1px 0  #000;
+		width: $eye-size;
+		height: $eye-size;
+		border-radius: 50% 80%;
+		overflow: hidden;
+		animation: blink 4s ease-in-out infinite;
+		
+		&.right {
+			transform: rotateY(180deg);
+		}
+		
+		&::before {
+			content: '';
+			background: $color-white;
+			opacity: .85;
+			width: $eye-size / 2;
+			height: $eye-size / 3;
+			display: block;
+			border-radius: 50%;
+			position: relative;
+			left: 10px;
+			top: 1px;
+		}
+	}
+}
+
+// Nose
+.bunny__nose {
+	position: relative; // if absolute breaks parent flex center alignment
+	width: 20px;
+	height: 10px;
+  border-radius: 50%;
+  bottom: -75px;
+  box-shadow: 0px 3px 0 0 pink,
+		          0px -4px 0px -2px darken($bunny-color, 12%);
+	z-index: 2;
+	animation: breath .5s cubic-bezier(0.4, 0, 1, 1) infinite;
+}
+
+.bunny__mouth {
+	position: absolute;
+	left: 0;
+	right: 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	bottom: 25px;
+	
+	&::before,
+	&::after {
+		@extend %mouth-details;
+	}
+	
+	.tooth {
+		position: absolute;
+		left: 50px;
+		right: 0;
+		bottom: -12px;
+		width: 10px;
+		height: 0px;
+		border-top: 15px solid #fff;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+	}
+}
+
+// Bunny body
+.bunny__body {
+	position: relative;
+	display: flex;
+	justify-content: center;
+}
+
+// Whiskers
+.bunny__whiskers {
+	width: 140px;
+	position: absolute;
+	left: -10px;
+	right: 0;
+	top: 80px;
+	
+	.whiskers {
+		@extend %whiskers;
+		float: left;
+		position: relative;
+		left: -25px;
+		
+		&.right {
+			transform: rotateY(180deg);
+			position: relative;
+    	left: 25px;
+		}
+		
+		&::after,
+		&.right::after {
+			@extend %whiskers;
+			content: '';
+			float: left;
+			margin-top: 10px;
+			transform: rotateZ(-10deg);
+		}	
+	}
+}
+
+// Chest
+.bunny__chest {
+	background: $bunny-color;
+	width: $bunny-head-size + 10px;
+	height: $bunny-head-size / 1.2 ;
+	box-shadow: inset -4px 22px 20px rgba(0, 0, 0, 0.21), 							    inset 0 -19px 3px 8px rgba(0, 0, 0, 0.21);
+	border-radius: 40% 40% 60% 60%;
+	display: flex;
+	justify-content: center;
+	position: relative;
+	top: -30px;
+	z-index: 1; // relative to back paws
+	
+	.chest-details {
+		position: relative;
+		width: 45px;
+		height: 45px;
+		background: lighten($bunny-color, 5%);
+		box-shadow: inset 0 12px 6px -2px rgba(0, 0, 0, 0.15);
+		border-radius: 20% 20% 50% 50%;
+		top: 25px;
+		z-index: 1;
+		
+		&::before {
+			//@extend %bunny-fur -- to do: create mixin;
+			content: '';
+			width: 20px;
+			height: 15px;
+			border-radius: 50%;
+			box-shadow: 0 -5px 0 0 darken($bunny-color, 5%);
+			transform: rotateZ(200deg);
+			display: table;
+    	margin: 0 auto;
+		}
+		
+		&::after {
+			content: '';
+			width: 20px;
+			height: 15px;
+			border-radius: 50%;
+			box-shadow: 0 -5px 0 0 darken($bunny-color, 5%);
+			transform: rotateZ(150deg);
+			display: table;
+    	margin: -4px auto 0 auto;
+		}
+	}
+}
+
+// Front paws
+.bunny__front-paws {
+	display: flex;
+	position: absolute;
+	left: 15px;
+	right: 0;
+	
+	.paw {
+		width: 30px;
+		height: 10px;
+		border-top: 60px solid $bunny-color;
+    border-left: 15px solid transparent;
+    border-right: 5px solid transparent;
+		margin-top: 45px;
+		
+		&.right {
+			transform: rotateY(180deg);
+		}
+		
+		&::before {
+			content: '';
+			background: darken($bunny-color, 5%);
+			width: 40px;
+			height: 20px;
+			display: block;
+			border-radius: 20px 50%;
+			position: relative;
+			left: -9px;
+			top: -5px;
+		}
+		
+		&::after {
+			content: '';
+    	width: 8px;
+    	height: 7px;
+    	border-radius: 50%;
+    	box-shadow: -2px 0 0 1px rgba(0, 0, 0, 0.4), 
+									-6px 0 0 1px $bunny-color, 
+									-8px 0 0 1px rgba(0, 0, 0, 0.4);
+    	display: block;
+    	position: relative;
+    	top: -14px;
+			left: 8px;
+		}
+	}
+}
+
+// Back paws
+.bunny__back-paws {
+	width: 175px;
+	display: flex;
+	justify-content: space-between;
+	position: absolute;
+	left: -22px;
+	right: 0;
+	bottom: 35px;
+	
+	.paw {
+		background: $bunny-color;
+		width: 60px;
+		height: 30px;
+		border-radius: 60%/100% 40% 0 4px;
+		box-shadow: inset -21px 4px 19px 5px rgba(0, 0, 0, 0.27);
+		
+		&.right {
+			transform: rotateY(180deg);
+		}
+		
+		&::before {
+			content: '';
+    	width: 8px;
+    	height: 10px;
+    	border-radius: 50%;
+    	box-shadow: -2px 0 0 1px rgba(0, 0, 0, 0.4), 
+									-10px 0 0 1px $bunny-color, 
+									-12px 0 0 1px rgba(0, 0, 0, 0.4);
+    	display: block;
+    	position: relative;
+    	top: 18px;
+			left: 20px;
+		}
+	}
+}
+
+.ground {
+	background: rgba(0, 0, 0, 0.12);
+  width: 500px;
+  height: 70px;
+  border-radius: 50%;
+	display: table;
+	margin-top: -70px;
+}
+
+// Animations
+@keyframes swing {
+	0%, 50%, 90%, 100% {
+		transform: rotateZ(-12deg);
+	}
+	
+	10%, 20%, 40% {
+    transform: rotateZ(0);
+  }
+}
+
+@keyframes breath {
+	to {
+		transform: scale(1.1)
+							 translateY(2px);
+	}
+}
+
+@keyframes blink {
+	0%, 97% {
+		height: 25px;
+		opacity: 1;
+	}
+	100% {
+		height: 18px;
+		opacity: 0.4;
+	}
+}
+
+@keyframes balance {
+	10%, 20%, 40% {
+		transform: rotateZ(232deg)
+			         rotateY(180deg);
+	}
+	
+	0%, 50%, 90%, 100% {
+		transform: rotateZ(245deg)
+			         rotateY(180deg);
+	}
+}
+
